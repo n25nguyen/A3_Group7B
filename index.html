@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NekoBeat</title>
+
+    <link rel="stylesheet" href="style.css" />
+    <script src="libraries/p5.min.js"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Micro+5&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jersey+25&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <audio
+      id="bgMusic"
+      src="assets/audio/starstruck.mp3"
+      preload="auto"
+    ></audio>
+    <audio
+      id="menuMusic"
+      src="assets/audio/chill.mp3"
+      preload="auto"
+    ></audio>
+
+    <!-- HOME SCREEN -->
+    <div id="homeScreen" class="screen">
+      <div class="title">
+        <img src="assets/images/logo.png" alt="NekoBeat Logo" id="homeLogo" />
+      </div>
+      <button id="homePlayButton">PLAY</button>
+      <button id="instructionsButton">INSTRUCTIONS</button>
+    </div>
+
+    <!-- INSTRUCTIONS SCREEN -->
+    <div id="instructionsScreen" class="screen" style="display: none">
+      <h1 class="instructionsTitle">INSTRUCTIONS</h1>
+
+      <div class="instructionsText">
+        <p>
+          When a note reaches the hit bar, press the key that matches its lane.
+          Later levels add more keys; you start with these two:
+        </p>
+
+        <figure
+          class="keyDiagram"
+          aria-label="Keyboard diagram: F key on the left, J key on the right"
+        >
+          <div class="keyDiagramRow">
+            <span class="keyCap keyCapDim" aria-hidden="true">D</span>
+            <span class="keyCap keyCapActive">F</span>
+            <span class="keyCap keyCapDim" aria-hidden="true">G</span>
+            <span class="keyCap keyCapDim" aria-hidden="true">H</span>
+            <span class="keyCap keyCapActive">J</span>
+            <span class="keyCap keyCapDim" aria-hidden="true">K</span>
+          </div>
+          <figcaption class="keyDiagramCaption">
+            Left hand · <kbd class="keyCapInline">F</kbd> &nbsp;·&nbsp; Right hand ·
+            <kbd class="keyCapInline">J</kbd>
+          </figcaption>
+        </figure>
+
+        <p>Try to time your presses perfectly to clear each level!</p>
+      </div>
+
+      <button id="instructionsPlayButton">PLAY</button>
+      <button id="instructionsBackButton">BACK</button>
+    </div>
+
+    <!-- LEVEL INTRO (shown before starting level 2 or 3) -->
+    <div id="levelIntroScreen" class="screen" style="display: none">
+      <h1 class="instructionsTitle" id="levelIntroHeading">LEVEL 2</h1>
+      <div id="levelIntroContent" class="levelIntroContent"></div>
+      <button id="levelIntroContinueButton">CONTINUE</button>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="gameScreen" class="screen" style="display: none">
+      <!-- Top Menu Bar -->
+      <div id="topBar">
+        <div class="topBarLeft">
+          <div id="backButton">&lt; BACK</div>
+          <span id="gameLevelBadge" class="gameLevelBadge" aria-live="polite">Level 1</span>
+        </div>
+        <div class="topBarRight">
+          <div
+            id="muteButton"
+            class="topBarIconButton"
+            role="button"
+            tabindex="0"
+            aria-label="Toggle music"
+            aria-pressed="false"
+            title="Toggle music"
+          >
+            MUSIC
+          </div>
+          <div id="pauseButton">II PAUSE</div>
+        </div>
+        <h1 id="message">Hit F and J as the notes reach the bar</h1>
+      </div>
+
+      <!-- Container for canvas and side images -->
+      <div id="gameContainer">
+        <img src="assets/images/kitty.png" id="leftImg" />
+        <img src="assets/images/bunny.png" id="rightImg" />
+      </div>
+
+      <div id="playHud" class="playHud" aria-live="polite">
+        <span id="playScoreDisplay">Score 0</span>
+        <span id="playComboDisplay">Combo —</span>
+      </div>
+
+      <!-- Hit feedback below the canvas -->
+      <div id="hitFeedback"></div>
+
+      <!-- Retry button -->
+      <button id="retryButton" style="display: none">Try Again</button>
+    </div>
+    
+    <!-- LEVEL COMPLETE SCREEN -->
+    <div id="levelCompleteScreen" class="screen screen--bkgd2" style="display: none">
+      <h1 class="instructionsTitle" id="levelCompleteTitle">LEVEL COMPLETE!</h1>
+      <p id="levelCompleteWinLine" class="levelCompleteWinLine">
+        You cleared every level — you win!
+      </p>
+      <img
+        id="scoreImage"
+        src=""
+        alt=""
+        class="levelCompleteScoreImg"
+        style="display: none"
+      />
+      <p id="levelScore" class="levelCompleteScoreBlock"></p>
+      <button id="nextLevelButton">NEXT LEVEL</button>
+      <button id="tryAgainButton">TRY AGAIN</button>
+      <button id="levelHomeButton">HOME</button>
+    </div>
+
+    <!-- GAME OVER SCREEN -->
+    <div id="gameOverScreen" class="screen screen--bkgd2" style="display: none">
+      <h1 class="instructionsTitle" id="gameOverTitle">GAME OVER</h1>
+      <p id="gameOverLevelLine" class="levelCompleteScoreBlock"></p>
+      <p id="gameOverScoreLine" class="levelCompleteScoreBlock"></p>
+      <button id="gameOverRetryButton">TRY AGAIN</button>
+      <button id="gameOverHomeButton">HOME</button>
+    </div>
+
+    <script src="levels.js"></script>
+    <script src="sketch.js"></script>
+  </body>
+</html>
