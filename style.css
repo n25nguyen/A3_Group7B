@@ -16,6 +16,7 @@ body {
   align-items: center;
 
   /* default background is for game screen */
+  background: url("assets/images/bkgdGame.png") center/cover no-repeat fixed;
   min-height: 100vh;
 }
 

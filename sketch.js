@@ -255,7 +255,7 @@ function showLevelComplete() {
   const stars = getStarCount(levelScore, totalPossibleScore);
 
   title.innerText =
-    completedLevel === maxLevels ? "GAME OVER" : `LEVEL ${completedLevel} COMPLETE!`;
+    completedLevel === maxLevels ? "GAME COMPLETE" : `LEVEL ${completedLevel} COMPLETE!`;
   winLine.style.display = completedLevel === maxLevels ? "block" : "none";
 
   nextBtn.style.display = completedLevel < maxLevels ? "block" : "none";
