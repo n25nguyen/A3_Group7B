@@ -548,7 +548,6 @@ function spawnScheduledNotes() {
         y: -rectHeight,
         hit: false,
       });
-      // totalPossibleScore += SCORE_PERFECT; // every note is worth 200 at best
       spawnedBeats.add(i);
     }
   }
@@ -683,7 +682,7 @@ rect(barX, barYProgress, barW * progress, barH);
     rect(0, 0, width, height);
     textAlign(CENTER, CENTER);
     textSize(52);
-    textStyle(BOLD);
+    textFont('Micro 5'); 
     fill(255);
     text("PAUSED", width * 0.5, height * 0.5);
     textStyle(NORMAL);
