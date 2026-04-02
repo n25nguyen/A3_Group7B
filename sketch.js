@@ -681,7 +681,7 @@ rect(barX, barYProgress, barW * progress, barH);
     fill(0, 0, 0, 120);
     rect(0, 0, width, height);
     textAlign(CENTER, CENTER);
-    textSize(52);
+    textSize(60);
     textFont('Micro 5'); 
     fill(255);
     text("PAUSED", width * 0.5, height * 0.5);
