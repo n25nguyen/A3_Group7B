@@ -34,7 +34,7 @@ let musicMuted = false;
 
 const LEVEL_MUSIC_SOURCES = {
   1: "assets/audio/starstruck.mp3",
-  2: "assets/audio/starstruck.mp3",
+  2: "assets/audio/hyperpop.mp3",
   3: "assets/audio/cute.mp3",
 };
 
@@ -164,11 +164,11 @@ function updatePlayHud() {
 }
 
 function setGameplayShake(x = 0, y = 0, rotate = 0) {
-  const container = document.getElementById("gameContainer");
-  if (!container) return;
-  container.style.setProperty("--shake-x", `${x}px`);
-  container.style.setProperty("--shake-y", `${y}px`);
-  container.style.setProperty("--shake-rotate", `${rotate}deg`);
+  const stage = document.getElementById("canvasStage");
+  if (!stage) return;
+  stage.style.setProperty("--shake-x", `${x}px`);
+  stage.style.setProperty("--shake-y", `${y}px`);
+  stage.style.setProperty("--shake-rotate", `${rotate}deg`);
 }
 
 function updateGameplayShake() {
@@ -429,7 +429,7 @@ function showScreen(screen) {
 
 /* ---------- GAME SETUP ---------- */
 function setup() {
-  createCanvas(600, 600).parent("gameContainer");
+  createCanvas(600, 600).parent("canvasStage");
   barBaseYValue = height - 50;
   pixelsPerSecond = (barBaseYValue + rectHeight) / travelTime;
 
