@@ -49,6 +49,12 @@ const TOTAL_POSSIBLE_ROUND_3 = 11200;
 let levelStartTime = 0;
 let levelEndTime = 0;
 
+/* ---------- Difficulty Modifiers ---------- */
+const COMBO_SHAKE_START = 6;
+const COMBO_SHAKE_STEP = 0.85;
+const COMBO_SHAKE_MAX = 12;
+const HIT_BAR_INSET = 6;
+
 function showHitFeedback(text, type) {
   const hitFeedback = document.getElementById("hitFeedback");
 
@@ -128,12 +134,38 @@ function updatePlayHud() {
   comboEl.textContent = combo > 0 ? `Combo ×${combo}` : "Combo —";
 }
 
+function setGameplayShake(x = 0, y = 0, rotate = 0) {
+  const container = document.getElementById("gameContainer");
+  if (!container) return;
+  container.style.setProperty("--shake-x", `${x}px`);
+  container.style.setProperty("--shake-y", `${y}px`);
+  container.style.setProperty("--shake-rotate", `${rotate}deg`);
+}
+
+function updateGameplayShake() {
+  if (paused || gameOver || combo < COMBO_SHAKE_START) {
+    setGameplayShake();
+    return;
+  }
+
+  const intensity = min(
+    COMBO_SHAKE_MAX,
+    2 + (combo - COMBO_SHAKE_START) * COMBO_SHAKE_STEP
+  );
+
+  setGameplayShake(
+    random(-intensity, intensity),
+    random(-intensity, intensity),
+    random(-intensity * 0.18, intensity * 0.18)
+  );
+}
+
 function getHintMessageForLevel() {
   if (level === 1) {
     return "Hit F and J as the notes reach the bar";
   }
   if (level === 2) {
-    return "Hit D, F, J, and K as the notes reach the bar";
+    return "Hit F, space, and J as the notes reach the bar";
   }
   return "Hit D, F, space, J, and K as the notes reach the bar";
 }
@@ -171,6 +203,7 @@ function beginLevel(levelNum) {
   calculateLevelEndTime();
   hadPositiveScore = false;
   combo = 0;
+  setGameplayShake();
   updateGameplayLevelUI();
   document.getElementById("message").innerText = getHintMessageForLevel();
   showScreen(gameScreen);
@@ -183,34 +216,33 @@ function showLevelIntroScreen(targetLevel) {
   const content = document.getElementById("levelIntroContent");
 
   if (targetLevel === 2) {
-    heading.textContent = "LEVEL 2 — NEW KEYS";
+    heading.textContent = "LEVEL 2 — SPACE BAR";
     content.innerHTML = `
       <div class="instructionsText">
         <p>
-          Two more lanes are in play: press <strong>D</strong> for the left outer lane and
-          <strong>K</strong> for the right outer lane (the pink lanes). Keep using
-          <strong>F</strong> and <strong>J</strong> for the cyan lanes in the middle.
+          The wide center lane now uses the <strong>space bar</strong> (yellow notes).
+          Keep using <strong>F</strong> and <strong>J</strong> for the cyan lanes on either side.
         </p>
-        <figure class="keyDiagram" aria-label="Keys D F J and K">
+        <figure class="keyDiagram" aria-label="Keys F, space, and J">
           <div class="keyDiagramRow keyDiagramRowFive">
-            <span class="keyCap keyCapLaneOuter">D</span>
+            <span class="keyCap keyCapLaneOuter keyCapDim">D</span>
             <span class="keyCap keyCapActive">F</span>
-            <span class="keyCap keyCapGap" aria-hidden="true">·</span>
+            <span class="keyCap keyCapSpace">Space</span>
             <span class="keyCap keyCapActive">J</span>
-            <span class="keyCap keyCapLaneOuter">K</span>
+            <span class="keyCap keyCapLaneOuter keyCapDim">K</span>
           </div>
           <figcaption class="keyDiagramCaption">
-            New outer lanes · <kbd class="keyCapInline keyCapInlineOuter">D</kbd> ·
-            <kbd class="keyCapInline keyCapInlineOuter">K</kbd>
+            New center lane · thumb · <kbd class="keyCapInline keyCapInlineSpace">Space</kbd>
           </figcaption>
         </figure>
       </div>`;
   } else if (targetLevel === 3) {
-    heading.textContent = "LEVEL 3 — SPACE BAR";
+    heading.textContent = "LEVEL 3 — D AND K";
     content.innerHTML = `
       <div class="instructionsText">
         <p>
-          The wide center lane uses the <strong>space bar</strong> (yellow notes). All five lanes are
+          The pink outer lanes are now live: press <strong>D</strong> on the far left and
+          <strong>K</strong> on the far right. The center <strong>space bar</strong> lane stays active too, so all five lanes are
           active: <strong>D</strong>, <strong>F</strong>, <strong>space</strong>, <strong>J</strong>, and <strong>K</strong>.
         </p>
         <figure class="keyDiagram" aria-label="All five keys including space">
@@ -222,7 +254,8 @@ function showLevelIntroScreen(targetLevel) {
             <span class="keyCap keyCapLaneOuter">K</span>
           </div>
           <figcaption class="keyDiagramCaption">
-            Center lane · thumb · <kbd class="keyCapInline keyCapInlineSpace">Space</kbd>
+            New outer lanes · <kbd class="keyCapInline keyCapInlineOuter">D</kbd> ·
+            <kbd class="keyCapInline keyCapInlineOuter">K</kbd>
           </figcaption>
         </figure>
       </div>`;
@@ -237,6 +270,7 @@ function showGameOver() {
     levelCompleteTimer = null;
   }
   gameOver = true;
+  setGameplayShake();
   bgMusic.pause();
   document.getElementById("gameOverLevelLine").textContent = `Level ${level}`;
   document.getElementById("gameOverScoreLine").textContent = `Score: ${levelScore}`;
@@ -281,14 +315,23 @@ function showLevelComplete() {
 /* ---------- Hit bar ---------- */
 const barBaseY = 550;
 let barBaseYValue;
-const barOscillateStart = 30;
-const barAmplitude = 25;
-const barPeriod = 1.5;
+const BAR_MOTION_PROFILES = {
+  1: { start: 24, amplitude: 12, period: 1.3 },
+  2: { start: 14, amplitude: 20, period: 1.05 },
+  3: { start: 8,  amplitude: 28, period: 0.9 },
+};
+
+function getBarMotionProfile() {
+  return BAR_MOTION_PROFILES[level] || BAR_MOTION_PROFILES[1];
+}
 
 function getBarY(songTime) {
-  if (songTime < barOscillateStart) return barBaseYValue;
-  const t = songTime - barOscillateStart;
-  return barBaseYValue + barAmplitude * sin((TWO_PI * t) / barPeriod);
+  const { start, amplitude, period } = getBarMotionProfile();
+  if (songTime < start) return barBaseYValue;
+
+  const t = songTime - start;
+  const y = barBaseYValue + amplitude * sin((TWO_PI * t) / period);
+  return constrain(y, barBaseYValue - amplitude, height - barHeight - 8);
 }
 
 /* ---------- Beat / timing constants ---------- */
@@ -368,6 +411,7 @@ function setup() {
   applyMusicVolume();
   updateMuteButtonVisual();
   synthLow.volume = 0.5;
+  setGameplayShake();
 
   if (gameScreen.style.display === "none") {
     menuMusic.play().catch(() => {});
@@ -523,6 +567,7 @@ function resetGame() {
   document.getElementById("message").innerText = getHintMessageForLevel();
   hadPositiveScore = false;
   combo = 0;
+  setGameplayShake();
   calculateLevelEndTime();
   updateGameplayLevelUI();
 }
@@ -557,26 +602,25 @@ function spawnScheduledNotes() {
 function draw() {
   background(0);
   noStroke();
+  updateGameplayShake();
 
   // ---- Progress Bar ----
-const songTime = bgMusic.currentTime;
-let progress = constrain(songTime / levelEndTime, 0, 1);
+  const songTime = bgMusic.currentTime;
+  let progress = constrain(songTime / levelEndTime, 0, 1);
 
-const barX = 50;
-const barYProgress = 20;
-const barW = width - 100;
-const barH = 12;
+  const barX = 50;
+  const barYProgress = 20;
+  const barW = width - 100;
+  const barH = 12;
 
-// Outline
-noFill();
-stroke(255);
-strokeWeight(2);
-rect(barX, barYProgress, barW, barH);
+  noFill();
+  stroke(255);
+  strokeWeight(2);
+  rect(barX, barYProgress, barW, barH);
 
-// Fill
-noStroke();
-fill(255);
-rect(barX, barYProgress, barW * progress, barH);
+  noStroke();
+  fill(255);
+  rect(barX, barYProgress, barW * progress, barH);
 
   if (!gameOver && !paused) {
     spawnScheduledNotes();
@@ -612,11 +656,16 @@ rect(barX, barYProgress, barW * progress, barH);
   }
 
   // ---- Hit bar ----
-  const currentBarY = getBarY(bgMusic.currentTime);
-  drawingContext.shadowBlur  = 25;
-  drawingContext.shadowColor = color(255);
-  fill(255, 200);
-  rect(0, currentBarY, width, barHeight);
+  const currentBarY = getBarY(songTime);
+  drawingContext.shadowBlur = 22;
+  drawingContext.shadowColor = color(255, 255, 255, 180);
+  fill(255, 255, 255, 55);
+  stroke(255, 255, 255, 235);
+  strokeWeight(3);
+  rect(HIT_BAR_INSET, currentBarY, width - HIT_BAR_INSET * 2, barHeight, 8);
+  noStroke();
+  fill(255, 255, 255, 120);
+  rect(HIT_BAR_INSET + 8, currentBarY + barHeight / 2 - 1, width - (HIT_BAR_INSET + 8) * 2, 2, 2);
   drawingContext.shadowBlur = 0;
 
   // ---- Update and draw rectangles ----
@@ -640,7 +689,7 @@ rect(barX, barYProgress, barW * progress, barH);
           r.hit = true;
           levelScore += SCORE_MISS;
           combo = 0;
-          showHitFeedback("Miss", "red");
+          showHitFeedback("Miss", "Miss");
         }
       }
     });
@@ -749,6 +798,7 @@ function keyPressed() {
   // Handle misses
   if (!hitSomething && laneGlow.hasOwnProperty(pressedKey)) {
     combo = 0;
+    setGameplayShake();
     levelScore = max(0, levelScore - SCORE_PENALTY);
     showHitFeedback("-100", "Miss"); // Show the penalty feedback in the color for "Miss"
     if (hadPositiveScore && levelScore === 0) {

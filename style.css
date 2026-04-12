@@ -441,6 +441,8 @@ button:hover {
 /* Game Container and Other Elements */
 #gameContainer {
   position: relative;
+  transform: translate(var(--shake-x, 0px), var(--shake-y, 0px)) rotate(var(--shake-rotate, 0deg));
+  will-change: transform;
 }
 
 canvas {

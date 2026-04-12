@@ -60,73 +60,71 @@ function generateBeatmap() {
   F(80, 1);
 
   // ---- LEVEL 2 ----
-  // Introduces D and K lanes alongside F and J.
+  // Introduces the space bar between the F and J lanes.
   // Longer waves with clearer gaps so the pacing can breathe.
 
-  // Wave 1: simple lane tour
+  // Wave 1: center-lane introduction
   F(0,  2);
   J(2,  2);
-  D(4,  2);
-  K(6,  2);
+  S(4,  2);
+  F(6,  2);
   FJ(8, 2);
-  D(10, 2);
+  S(10, 2);
 
   // Breather
 
-  // Wave 2: start mixing singles and doubles
-  K(16, 2);
-  F(18, 2);
-  J(19, 2);
-  D(21, 2);
-  K(23, 2);
+  // Wave 2: start mixing the center lane with doubles
+  FJ(16, 2);
+  S(18, 2);
+  F(20, 2);
+  J(21, 2);
+  S(23, 2);
   FJ(24, 2);
-  D(26, 2);
-  J(28, 2);
+  S(26, 2);
+  F(28, 2);
 
   // Breather
 
-  // Wave 3: busier center section
-  F(34, 2);
-  K(36, 2);
-  D(38, 2);
-  FJ(39, 2);
-  J(41, 2);
-  K(43, 2);
-  F(44, 2);
-  D(46, 2);
+  // Wave 3: space bar becomes part of the main rhythm
+  J(34, 2);
+  S(36, 2);
+  FJ(38, 2);
+  S(40, 2);
+  F(42, 2);
+  J(43, 2);
+  S(45, 2);
+  FJ(46, 2);
 
   // Breather
 
-  // Wave 4: alternating lanes with a couple doubles
-  FJ(52, 2);
-  K(53, 2);
-  D(55, 2);
-  F(57, 2);
-  J(58, 2);
-  K(60, 2);
-  FJ(62, 2);
-  D(64, 2);
-  J(65, 2);
-  K(67, 2);
+  // Wave 4: faster alternation through the middle three lanes
+  F(52, 2);
+  S(53, 2);
+  J(55, 2);
+  FJ(57, 2);
+  S(58, 2);
+  F(60, 2);
+  J(62, 2);
+  S(63, 2);
+  FJ(65, 2);
+  S(67, 2);
 
   // Breather
 
   // Wave 5: longer closing run so the progress bar has room to move
-  F(74, 2);
-  D(76, 2);
-  K(77, 2);
-  FJ(79, 2);
-  J(81, 2);
-  D(82, 2);
-  K(84, 2);
+  FJ(74, 2);
+  S(76, 2);
+  J(79, 2);
+  S(81, 2);
+  FJ(82, 2);
   F(86, 2);
-  FJ(87, 2);
-  D(89, 2);
-  J(91, 2);
-  K(93, 2);
+  S(89, 2);
+  FJ(91, 2);
+  S(93, 2);
 
   // ---- LEVEL 3 ----
-  // All 5 lanes active including Space. Longer waves keep the bar moving here too.
+  // D and K join the existing F, J, and space lanes.
+  // All 5 lanes stay active here.
 
   // Wave 1: full-lane introduction
   F(0,  3);
