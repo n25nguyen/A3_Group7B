@@ -1,7 +1,7 @@
 ## Project Title
 GBDA 302 A3 Final Game: NekoBeat
 ---
-## Group Number (only for group work)
+## Group Number
 7B
 
 ---
@@ -129,6 +129,67 @@ During the showcase, players generally enjoyed the rhythm-based gameplay and vis
 **4. Challenge simplification**
 - We will keep the game mechanics simple; instead of introducing many new and different challenges, we will nail the core mechanic of hitting the keys to the rhythm of the music.
 - Difficulty progression will be executed through this core musical rhythm mechanic.
+
+---
+## Iteration Notes (Post-A3-Showcase)
+
+Showcase Summary:
+
+After playtesting with peers, several key areas for improvement were identified:
+
+1. Hit Bar Effectiveness
+The vertical movement of the hit bar did not significantly impact gameplay difficulty or player experience.
+
+2. Hit Bar Visibility
+The hit bar was not visually distinct enough, making it harder to judge when notes should be hit.
+
+3. Lack of Dynamic Difficulty
+Gameplay difficulty remained relatively constant and did not scale with player performance (e.g., streaks or combos).
+
+4. Control Progression Confusion
+Introducing multiple new keys too quickly (e.g., D and K in Level 2) felt overwhelming.
+
+5. New keys introduced in later levels were not clearly communicated
+
+6. Audio & Visual Consistency
+Playtesters asked for different songs for the different levels, allowing for variety and fun.
+
+### Changes Implemented
+
+1. Hit Bar Redesign
+Removed/reduced vertical movement
+Added white outline and transparency
+
+2. Dynamic Difficulty (Screen Shake)
+Added screen shake effect during high combos/streaks
+
+3. Improved Level Progression
+Level 2: Introduces Spacebar
+Level 3: Introduces D and K
+
+4. Instruction UI Improvements
+Added visual boxes around F and J keys
+
+5. Gameplay UI Enhancements
+Displayed current level during gameplay
+Added live score (and combo) display
+
+6. Level Complete Screen Updates
+Shows which level was completed
+Displays score using star visuals
+Increased star size and removed unnecessary text
+
+7. Pause & Audio Feedback
+Added “PAUSED” overlay on dimmed screen
+Added mute/music toggle button
+
+8. Audio & Visual Updates
+Set chill.mp3 as background music for non-gameplay screens
+Updated background images
+Refined button UI and hit feedback visuals
+
+9. Control Communication Improvements
+Added UI updates after Level 1 to introduce new keys
 
 ---
 ## Assets

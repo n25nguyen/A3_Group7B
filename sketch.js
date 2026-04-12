@@ -32,6 +32,12 @@ let hadPositiveScore = false;
 let combo = 0;
 let musicMuted = false;
 
+const LEVEL_MUSIC_SOURCES = {
+  1: "assets/audio/starstruck.mp3",
+  2: "assets/audio/starstruck.mp3",
+  3: "assets/audio/cute.mp3",
+};
+
 /* ---------- Scoring ---------- */
 let levelScore = 0;
 let totalPossibleScore = 0;
@@ -126,6 +132,29 @@ function updateMuteButtonVisual() {
   el.setAttribute("aria-pressed", musicMuted ? "true" : "false");
 }
 
+function getMusicSourceForLevel(levelNum) {
+  return LEVEL_MUSIC_SOURCES[levelNum] || LEVEL_MUSIC_SOURCES[1];
+}
+
+function syncBackgroundTrack(levelNum, restart = true) {
+  if (!bgMusic) return;
+
+  const nextSrc = getMusicSourceForLevel(levelNum);
+  const currentSrc = bgMusic.getAttribute("src");
+
+  if (currentSrc !== nextSrc) {
+    bgMusic.pause();
+    bgMusic.setAttribute("src", nextSrc);
+    bgMusic.load();
+  }
+
+  if (restart) {
+    bgMusic.currentTime = 0;
+  }
+
+  applyMusicVolume();
+}
+
 function updatePlayHud() {
   const scoreEl = document.getElementById("playScoreDisplay");
   const comboEl = document.getElementById("playComboDisplay");
@@ -192,6 +221,7 @@ function beginLevel(levelNum) {
     levelCompleteTimer = null;
   }
   level = levelNum;
+  syncBackgroundTrack(level);
   spawnedBeats = new Set();
   rectangles = [];
   particles = [];
@@ -199,7 +229,6 @@ function beginLevel(levelNum) {
   paused = false;
   levelScore = 0;
   setTotalPossibleScore();
-  bgMusic.currentTime = 0;
   calculateLevelEndTime();
   hadPositiveScore = false;
   combo = 0;
@@ -406,6 +435,7 @@ function setup() {
 
   bgMusic = document.getElementById("bgMusic");
   bgMusic.loop = true;
+  syncBackgroundTrack(level, false);
   menuMusic = document.getElementById("menuMusic");
   menuMusic.loop = true;
   applyMusicVolume();
@@ -453,6 +483,7 @@ function setup() {
     const currentLevel = level;
     resetGame();
     level = currentLevel;
+    syncBackgroundTrack(level);
     hadPositiveScore = false;
     combo = 0;
     calculateLevelEndTime();
@@ -488,7 +519,7 @@ function setup() {
     paused = false;
     levelScore = 0;
     setTotalPossibleScore();
-    bgMusic.currentTime = 0;
+    syncBackgroundTrack(level);
     calculateLevelEndTime();
     hadPositiveScore = false;
     combo = 0;
@@ -512,7 +543,7 @@ function setup() {
     combo = 0;
     levelScore = 0;
     setTotalPossibleScore();
-    bgMusic.currentTime = 0;
+    syncBackgroundTrack(level);
     calculateLevelEndTime();
     document.getElementById("message").innerText = getHintMessageForLevel();
     showScreen(gameScreen);
@@ -526,8 +557,8 @@ function setup() {
       levelCompleteTimer = null;
     }
     bgMusic.pause();
-    bgMusic.currentTime = 0;
     level = 1;
+    syncBackgroundTrack(level);
     gameOver = false;
     hadPositiveScore = false;
     showScreen(homeScreen);
@@ -536,8 +567,8 @@ function setup() {
   document.getElementById("levelHomeButton").onclick = () => {
     if (levelCompleteTimer) { clearTimeout(levelCompleteTimer); levelCompleteTimer = null; }
     bgMusic.pause();
-    bgMusic.currentTime = 0;
     level = 1;
+    syncBackgroundTrack(level);
     showScreen(homeScreen);
   };
 }
@@ -552,6 +583,7 @@ function playBackgroundMusic() {
 /* ---------- RESET GAME ---------- */
 function resetGame() {
   level = 1;
+  syncBackgroundTrack(level);
   gameOver = false;
   paused = false;
   rectangles = [];
@@ -561,7 +593,6 @@ function resetGame() {
   levelCompleteTimer = null;
   levelScore = 0;
   setTotalPossibleScore();
-  bgMusic.currentTime = 0;
   document.getElementById("retryButton").style.display = "none";
   document.getElementById("hitFeedback").innerText = "";
   document.getElementById("message").innerText = getHintMessageForLevel();
